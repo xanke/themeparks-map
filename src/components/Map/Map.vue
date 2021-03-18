@@ -4,12 +4,12 @@
 
 <template>
   <div class="ds-map">
-    <v-map v-if="local === 'shanghai'" :crs="crsBaidu" ref="map" :zoom="18" :min-zoom=12 :max-zoom=20 :center="center" :options="options">
+    <v-map v-if="crs === 'baidu'" :crs="crsBaidu" ref="map" :zoom="18" :min-zoom="10" :max-zoom="20" :center="center" :options="options">
       <marker-cluster :options="clusterOptions">
         <slot></slot>
       </marker-cluster>
     </v-map>
-    <v-map v-else ref="map" :zoom="18" :min-zoom=14 :max-zoom=20 :center="center" :options="options">
+    <v-map v-else ref="map" :zoom="18" :min-zoom="14" :max-zoom="20" :center="center" :options="options">
       <marker-cluster :options="clusterOptions">
         <slot></slot>
       </marker-cluster>
@@ -41,7 +41,15 @@ export default {
 
   props: {
     local: String,
-    center: Array
+    center: Array,
+    crs: String,
+    layerUrl: String
+  },
+
+  watch: {
+    layerUrl() {
+      this.init()
+    }
   },
 
   data() {
@@ -86,27 +94,38 @@ export default {
   },
 
   mounted() {
-    const { local } = this
-    const url = TILE_LAYER[local]
-    const map = this.$refs.map.mapObject
-    const options = {
-      maxZoom: 20
-    }
-
-    if (local === 'shanghai') {
-      options.getUrlArgs = (tilePoint) => {
-        return {
-          z: tilePoint.z,
-          x: tilePoint.x + Math.pow(2, tilePoint.z - 1),
-          y: tilePoint.y + Math.pow(2, tilePoint.z - 1)
-        }
-      }
-    }
-
-    webdogTileLayer(url, options).addTo(map)
+    this.init()
   },
 
-  methods: {}
+  methods: {
+    init() {
+      const map = this.$refs.map.mapObject
+      const options = {
+        maxZoom: 20
+      }
+
+      if (this.crs === 'baidu') {
+        options.getUrlArgs = (tilePoint) => {
+          return {
+            z: tilePoint.z,
+            x: tilePoint.x + Math.pow(2, tilePoint.z - 1),
+            y: tilePoint.y + Math.pow(2, tilePoint.z - 1)
+          }
+        }
+
+        // options.getUrlArgs = (tilePoint) => {
+        //   console.log(tilePoint);
+        //   return {
+        //     z: tilePoint.z,
+        //     x: tilePoint.x,
+        //     y: Math.pow(2, tilePoint.z) - 1 - tilePoint.y
+        //   }
+        // }
+      }
+
+      webdogTileLayer(this.layerUrl, options).addTo(map)
+    }
+  }
 }
 </script>
 
