@@ -1,4 +1,8 @@
 # themepark-map
+主题乐园地图
+
+## TODO
+- [x] 上海迪士尼度假区
 
 ## Project setup
 ```
@@ -19,6 +23,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
