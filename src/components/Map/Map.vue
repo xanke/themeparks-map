@@ -24,13 +24,6 @@ import webdogTileLayer from './lib/webdogTileLayer'
 import MarkerCluster from './MarkerCluster'
 
 const NAME = 'att-map'
-const TILE_LAYER = {
-  shanghai: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/shdr-baidu/30/{z}/{x}/{y}.jpg',
-  orlando: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/93/{z}/{x}/{y}.jpg',
-  california: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/disneyland/38/{z}/{x}/{y}.jpg',
-  hongkong: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/hkdl/18/{z}/{x}/{y}.jpg',
-  paris: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/dlp/15/{z}/{x}/{y}.jpg'
-}
 
 export default {
   name: NAME,

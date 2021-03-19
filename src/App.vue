@@ -27,12 +27,16 @@ export default {
   },
 
   created() {
-    
+    this.showMap('shdr')
   },
 
   methods: {
     onChange(e) {
-      this.options = THEMEPARKS.find(_ => _.value === e.target.value)
+      this.showMap(e.target.value)
+    },
+
+    showMap(value) {
+      this.options = THEMEPARKS.find(_ => _.value === value)
     }
   }
 }
