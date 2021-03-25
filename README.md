@@ -9,7 +9,7 @@
 - [x] California Disneyland Park (https://disneyland.disney.go.com/maps)
 - [x] Paris Disneyland (https://www.disneylandparis.com/en-us/maps)
 - [x] Orlando Disney World (https://disneyworld.disney.go.com/maps)
-- [ ] Token Disney Resort (https://www.tokyodisneyresort.jp)
+- [x] Tokyo Disney Resort (https://www.tokyodisneyresort.jp)
 
 ### 环球乐园
 
