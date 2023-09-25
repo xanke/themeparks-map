@@ -4,14 +4,14 @@ export const THEMEPARKS = [
     value: 'shdr',
     tags: ['disneypand'],
     crs: 'baidu',
-    layerUrl: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/shdr-baidu/30/{z}/{x}/{y}.jpg',
+    layerUrl: 'https://secure.parksandresorts.wdpromedia.com/media/maps/prod/shdr-baidu/611231269/{z}/{x}/{y}.jpg',
     center: [31.1492, 121.6667]
   },
   {
     label: 'Hong Kong Disneyland Resort',
     value: 'hkdl',
     tags: ['disneypand'],
-    layerUrl: 'https://cdn6.parksmedia.wdprapps.disney.com/media/maps/prod/hkdl/30/{z}/{x}/{y}.jpg',
+    layerUrl: 'https://cdn6.parksmedia.wdprapps.disney.com/media/maps/prod/hkdl/35/{z}/{x}/{y}.jpg',
     center: [22.3130715, 114.0410932]
   },
   {
