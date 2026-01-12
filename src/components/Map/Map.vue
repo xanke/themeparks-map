@@ -122,3 +122,8 @@ export default {
 }
 </script>
 
+<style>
+  .ds-map {
+    height: 100vh;
+  }
+</style>

@@ -5,7 +5,7 @@
         {{item.label}}
       </a-radio-button>
     </a-radio-group>
-    <Map v-if="active" style="width: 100%; height: 800px" :crs="options.crs" :layerUrl="options.layerUrl" :center="options.center"></Map>
+    <Map v-if="active" style="width: 100%; height: 100vh" :crs="options.crs" :layerUrl="options.layerUrl" :center="options.center"></Map>
   </div>
 </template>
 
