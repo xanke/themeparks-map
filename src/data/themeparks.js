@@ -46,6 +46,29 @@ export const THEMEPARKS = [
     versions: ['20210210110000', '20250623170000'],
     center: [ 35.631777, 139.881632]
   },
+  {
+    label: 'Shanghai Lego Resort',
+    value: 'shll',
+    crs: 'tent',
+    tags: ['legoland'],
+    layerUrl: 'https://tencent-web-1320474462.cos.ap-shanghai.myqcloud.com/lego//map/tiles/{z}/{x}_{y}.jpg',
+    versions: [],
+    center: [ 30.891576, 121.105336]
+  },
+  {
+    label: 'USJ',
+    value: 'usj',
+    layerUrl: 'https://mobile-service.usj.co.jp/assets/MapTiles/Production/30039/512/{z}_{x}_{y}.jpg',
+    versions: [],
+    center:  [34.665732, 135.432105]
+  },
+  {
+    label: 'USF',
+    value: 'usf',
+    layerUrl: 'https://services.universalorlando.com/api/MapTiles/10255/512/{z}/{x}/{y}',
+    versions: [],
+    center:  [28.478979, -81.468522]
+  },
   // CloudFront-Signature=IRbWVuDNl6Y5DeyTJtG5LB2vcKrCiK~8dOo4A06GAYRWFsTYsCG5iB90a~X8OyQ123A4dD0u3piTyJy4pt8Fs0RoPR1GBi9XS2pGpmvUalWp91JWgZZ9QLHc97bFfZTRLTUsdm~6BNZketgHFFrqeQOFH2Whw2Sx1txj5DBlx0eHqBl3qZ2smmG8xZJzH6v7cFvFAuJuATQbCAG3ui2~vFkyv~GRJZYQQkOWrlat2fIBO~yQNR05TmmjFrwLBNSeChRtEjCx0Gu8YpC5HzxilVPZDeefVWnREx1yuTMyvRvd5h6eooA8SYFHsrDbPG4gz0WBdMpNoLCjicjz6BvwTQ__;CloudFront-Key-Pair-Id=APKAIJUGP2GGEWDAPMTQ;CloudFront-Policy=eyJTdGF0ZW1lbnQiOiBbeyJSZXNvdXJjZSI6Imh0dHBzOi8vY29udGVudHMtcG9ydGFsLnRva3lvZGlzbmV5cmVzb3J0LmpwLyoiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2MTkyNjEzMjd9LCJJcEFkZHJlc3MiOnsiQVdTOlNvdXJjZUlwIjoiMC4wLjAuMC8wIn19fV19
   // https://contents-portal.tokyodisneyresort.jp/limited/map-image/20210210110000/nighttime/z17/116464_51633.jpg
   // {

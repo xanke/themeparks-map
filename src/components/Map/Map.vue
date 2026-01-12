@@ -9,6 +9,11 @@
         <slot></slot>
       </marker-cluster>
     </v-map>
+    <v-map v-else-if="crs === 'tent'" :crs="crsTent" ref="map" :zoom="18" :min-zoom="10" :max-zoom="20" :center="center" :options="options">
+      <marker-cluster :options="clusterOptions">
+        <slot></slot>
+      </marker-cluster>
+    </v-map>
     <v-map v-else ref="map" :zoom="18" :min-zoom="14" :max-zoom="20" :center="center" :options="options">
       <marker-cluster :options="clusterOptions">
         <slot></slot>
@@ -22,7 +27,7 @@
 import crsBaidu from './lib/crs.baidu'
 import webdogTileLayer from './lib/webdogTileLayer'
 import MarkerCluster from './MarkerCluster'
-
+import L from 'leaflet';
 const NAME = 'att-map'
 
 export default {
@@ -53,6 +58,7 @@ export default {
         bounceAtZoomLimits: false // 关闭回弹
       },
       crsBaidu,
+      crsTent: L.CRS.EPSG3857,
       popupOption: {
         autoClose: false,
         closeButton: false,
