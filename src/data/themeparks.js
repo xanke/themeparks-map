@@ -47,6 +47,14 @@ export const THEMEPARKS = [
     center: [ 35.631777, 139.881632]
   },
   {
+    label: 'Tokyo Disney Resort - Night',
+    value: 'tokyoNight',
+    tags: ['disneypand'],
+    layerUrl: '/tkydl/limited/map-image/20250623170000/nighttime/z{z}/{x}_{y}.jpg',
+    versions: ['20210210110000', '20250623170000'],
+    center: [ 35.631777, 139.881632]
+  },
+  {
     label: 'Shanghai Lego Resort',
     value: 'shll',
     crs: 'tent',
