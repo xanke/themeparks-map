@@ -1,135 +1,144 @@
-<style>
-
-</style>
-
 <template>
   <div class="ds-map">
-    <v-map v-if="crs === 'baidu'" :crs="crsBaidu" ref="map" :zoom="18" :min-zoom="10" :max-zoom="20" :center="center" :options="options">
-      <marker-cluster :options="clusterOptions">
-        <slot></slot>
-      </marker-cluster>
-    </v-map>
-    <v-map v-else-if="crs === 'tent'" :crs="crsTent" ref="map" :zoom="18" :min-zoom="10" :max-zoom="20" :center="center" :options="options">
-      <marker-cluster :options="clusterOptions">
-        <slot></slot>
-      </marker-cluster>
-    </v-map>
-    <v-map v-else ref="map" :zoom="18" :min-zoom="14" :max-zoom="20" :center="center" :options="options">
-      <marker-cluster :options="clusterOptions">
-        <slot></slot>
-      </marker-cluster>
-    </v-map>
+    <LMap
+      v-if="crs === 'baidu'"
+      ref="mapRef"
+      :crs="crsBaidu"
+      :zoom="18"
+      :min-zoom="10"
+      :max-zoom="20"
+      :center="center"
+      :options="mapOptions"
+      @ready="onMapReady"
+    />
+    <LMap
+      v-else-if="crs === 'tent'"
+      ref="mapRef"
+      :crs="crsTent"
+      :zoom="18"
+      :min-zoom="10"
+      :max-zoom="20"
+      :center="center"
+      :options="mapOptions"
+      @ready="onMapReady"
+    />
+    <LMap
+      v-else
+      ref="mapRef"
+      :zoom="18"
+      :min-zoom="14"
+      :max-zoom="20"
+      :center="center"
+      :options="mapOptions"
+      @ready="onMapReady"
+    />
   </div>
 </template>
 
-<script>
+<script setup>
 /* eslint-disable */
+import { ref, watch } from 'vue'
+import { LMap } from '@vue-leaflet/vue-leaflet'
 import crsBaidu from './lib/crs.baidu'
 import webdogTileLayer from './lib/webdogTileLayer'
-import MarkerCluster from './MarkerCluster'
-import L from 'leaflet';
-const NAME = 'att-map'
+import L from 'leaflet'
+import 'leaflet.markercluster'
 
-export default {
-  name: NAME,
+const props = defineProps({
+  local: String,
+  center: Array,
+  crs: String,
+  layerUrl: String
+})
 
-  components: {
-    MarkerCluster
-  },
+const mapRef = ref(null)
 
-  props: {
-    local: String,
-    center: Array,
-    crs: String,
-    layerUrl: String
-  },
+const mapOptions = ref({
+  zoomSnap: 0.05,
+  touchZoom: 'center',
+  bounceAtZoomLimits: false
+})
 
-  watch: {
-    layerUrl() {
-      this.init()
-    }
-  },
+const crsTent = L.CRS.EPSG3857
 
-  data() {
-    return {
-      options: {
-        zoomSnap: 0.05, // 设置无极缩放
-        touchZoom: 'center', // 双指缩放地图的同时锁定地图移动
-        bounceAtZoomLimits: false // 关闭回弹
-      },
-      crsBaidu,
-      crsTent: L.CRS.EPSG3857,
-      popupOption: {
-        autoClose: false,
-        closeButton: false,
-        minWidth: 300,
-        className: 'att-popup'
-      },
-      tilelayerOptions: {
-        tms: true
-      },
-      clusterOptions: {
-        animate: false,
-        maxClusterRadius: 45, // 合并半径
-        showCoverageOnHover: false,
-        // disableClusteringAtZoom: 20
-        iconCreateFunction(cluster) {
-          return L.divIcon({
-            className: 'att-marker att-marker--more',
-            html: `
-              <div class="att-marker__child-1"></div>
-              <div class="att-marker__child-2"></div>
-              <div class="att-marker__content">
-                <div class="att-marker__num">${cluster.getChildCount()}</div>
-              </div>
-              <div class="att-marker__tip__container">
-                <div class="att-marker__tip">
-              </div>
-            `
-          })
-        }
-      }
-    }
-  },
-
-  mounted() {
-    this.init()
-  },
-
-  methods: {
-    init() {
-      const map = this.$refs.map.mapObject
-      const options = {
-        maxZoom: 20
-      }
-
-      if (this.crs === 'baidu') {
-        options.getUrlArgs = (tilePoint) => {
-          return {
-            z: tilePoint.z,
-            x: tilePoint.x + Math.pow(2, tilePoint.z - 1),
-            y: tilePoint.y + Math.pow(2, tilePoint.z - 1)
-          }
-        }
-
-        // options.getUrlArgs = (tilePoint) => {
-        //   console.log(tilePoint);
-        //   return {
-        //     z: tilePoint.z,
-        //     x: tilePoint.x,
-        //     y: Math.pow(2, tilePoint.z) - 1 - tilePoint.y
-        //   }
-        // }
-      }
-
-      webdogTileLayer(this.layerUrl, options).addTo(map)
-    }
+const clusterOptions = {
+  animate: false,
+  maxClusterRadius: 45,
+  showCoverageOnHover: false,
+  iconCreateFunction(cluster) {
+    return L.divIcon({
+      className: 'att-marker att-marker--more',
+      html: `
+        <div class="att-marker__child-1"></div>
+        <div class="att-marker__child-2"></div>
+        <div class="att-marker__content">
+          <div class="att-marker__num">${cluster.getChildCount()}</div>
+        </div>
+        <div class="att-marker__tip__container">
+          <div class="att-marker__tip">
+        </div>
+      `
+    })
   }
 }
+
+let mapInstance = null
+let clusterGroup = null
+let tileLayer = null
+
+const onMapReady = (map) => {
+  mapInstance = map
+
+  // 初始化 MarkerCluster
+  clusterGroup = L.markerClusterGroup(clusterOptions)
+  mapInstance.addLayer(clusterGroup)
+
+  initTileLayer()
+}
+
+const initTileLayer = () => {
+  if (!mapInstance) return
+
+  // 先移除旧的瓦片层，避免版本切换时图层叠加
+  if (tileLayer) {
+    mapInstance.removeLayer(tileLayer)
+    tileLayer = null
+  }
+
+  const options = {
+    maxZoom: 20
+  }
+
+  if (props.crs === 'baidu') {
+    options.getUrlArgs = (tilePoint) => {
+      return {
+        z: tilePoint.z,
+        x: tilePoint.x + Math.pow(2, tilePoint.z - 1),
+        y: tilePoint.y + Math.pow(2, tilePoint.z - 1)
+      }
+    }
+  }
+
+  tileLayer = webdogTileLayer(props.layerUrl, options)
+  tileLayer.addTo(mapInstance)
+}
+
+watch(
+  () => props.layerUrl,
+  () => {
+    initTileLayer()
+  }
+)
+
+// 暴露 clusterGroup 供外部使用
+defineExpose({
+  clusterGroup,
+  mapInstance
+})
 </script>
 
 <style>
-  .ds-map {
-    height: 100vh;
-  }
+.ds-map {
+  height: 100vh;
+}
 </style>

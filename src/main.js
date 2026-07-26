@@ -1,13 +1,11 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
-import 'ant-design-vue/dist/antd.css'
-import initLeaflet from '@/core/leaflet'
-import Antd from 'ant-design-vue';
+import router from './router'
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/reset.css'
+import 'leaflet/dist/leaflet.css'
 
-initLeaflet(Vue)
-Vue.use(Antd)
-
-Vue.config.productionTip = false
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+const app = createApp(App)
+app.use(Antd)
+app.use(router)
+app.mount('#app')
