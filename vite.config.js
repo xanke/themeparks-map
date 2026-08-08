@@ -16,6 +16,21 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/shdr/, '')
       },
+      '/california': {
+        target: 'https://secure.parksandresorts.wdpromedia.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/california/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader('Referer', 'https://disneyland.disney.go.com/')
+          })
+        }
+      },
+      '/shll': {
+        target: 'https://tencent-web-1320474462.cos.ap-shanghai.myqcloud.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/shll/, '')
+      },
       '/tkydl': {
         target: 'https://contents-portal.tokyodisneyresort.jp',
         changeOrigin: true,

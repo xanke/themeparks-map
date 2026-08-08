@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --host localhost",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "update-versions": "node scripts/update-versions.mjs",
+    "update-versions:dry": "node scripts/update-versions.mjs --dry-run"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.0",

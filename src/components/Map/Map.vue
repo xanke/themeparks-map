@@ -130,10 +130,130 @@ watch(
   }
 )
 
-// 暴露 clusterGroup 供外部使用
+// 等待瓦片加载完成（最长等待 3 秒），避免下载到空白区域
+const waitForTilesLoaded = () => {
+  return new Promise((resolve) => {
+    if (!tileLayer || typeof tileLayer.isLoading !== 'function' || !tileLayer.isLoading()) {
+      resolve()
+      return
+    }
+    const timer = setTimeout(resolve, 3000)
+    tileLayer.on('load', () => {
+      clearTimeout(timer)
+      resolve()
+    })
+  })
+}
+
+// 判断瓦片是否为同源资源（同源瓦片可直接绘制，不会污染 canvas）
+const isSameOrigin = (url) => {
+  try {
+    return new URL(url, location.href).origin === location.origin
+  } catch (e) {
+    return false
+  }
+}
+
+// 以 CORS 方式重新加载瓦片，确保绘制后 canvas 不被污染（仅用于跨域瓦片）
+const loadCleanImage = (src) =>
+  new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error('瓦片跨域加载失败'))
+    img.src = src
+  })
+
+// 将当前地图视图绘制到 canvas
+const captureMapCanvas = async () => {
+  if (!mapInstance) throw new Error('地图尚未就绪')
+  await waitForTilesLoaded()
+
+  const container = mapInstance.getContainer()
+  const mapRect = container.getBoundingClientRect()
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(mapRect.width)
+  canvas.height = Math.round(mapRect.height)
+  const ctx = canvas.getContext('2d')
+
+  // 背景填充，避免未加载瓦片区域透明
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+  // 通过 getBoundingClientRect 计算瓦片屏幕位置，
+  // 自动兼容 fractional zoom 下瓦片容器的缩放变换
+  const tileEls = Array.from(container.querySelectorAll('img.leaflet-tile-loaded'))
+  const drawItems = []
+  let corsFailed = false
+
+  await Promise.all(
+    tileEls.map(async (el) => {
+      const rect = el.getBoundingClientRect()
+      if (rect.width <= 0 || rect.height <= 0) return
+      if (isSameOrigin(el.src)) {
+        // 同源瓦片（如走代理的 shdr/tokyo）直接绘制，无额外请求
+        drawItems.push({ img: el, rect })
+      } else {
+        // 跨域瓦片需以 CORS 重新加载，避免污染 canvas 导致无法导出
+        try {
+          const cleanImg = await loadCleanImage(el.src)
+          drawItems.push({ img: cleanImg, rect })
+        } catch (e) {
+          corsFailed = true
+        }
+      }
+    })
+  )
+
+  if (corsFailed) {
+    throw new Error('该地图源不支持跨域导出')
+  }
+
+  drawItems.forEach(({ img, rect }) => {
+    ctx.drawImage(
+      img,
+      rect.left - mapRect.left,
+      rect.top - mapRect.top,
+      rect.width,
+      rect.height
+    )
+  })
+
+  return canvas
+}
+
+// 一键下载当前地图视图为 PNG
+const downloadMapAsImage = async (filename = 'map.png') => {
+  const canvas = await captureMapCanvas()
+  return new Promise((resolve, reject) => {
+    try {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('导出图片失败'))
+          return
+        }
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = filename
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        resolve()
+      }, 'image/png')
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
+// 暴露给父组件：getMapInstance/getClusterGroup 以函数形式暴露，
+// 保证调用时取到的是初始化后的最新实例
 defineExpose({
-  clusterGroup,
-  mapInstance
+  getMapInstance: () => mapInstance,
+  getClusterGroup: () => clusterGroup,
+  downloadMapAsImage
 })
 </script>
 

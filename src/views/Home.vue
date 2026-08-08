@@ -19,6 +19,16 @@
               </a-tag>
             </template>
             <p class="park-card-desc">点击查看地图</p>
+            <a
+              v-if="park.officialUrl"
+              class="park-card-link"
+              :href="park.officialUrl"
+              target="_blank"
+              rel="noopener"
+              @click.stop
+            >
+              <LinkOutlined /> 官网地图
+            </a>
           </a-card>
         </a-col>
       </a-row>
@@ -29,6 +39,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { LinkOutlined } from '@ant-design/icons-vue'
 import { THEMEPARKS, TAG_NAMES } from '@/data/themeparks'
 
 const router = useRouter()
@@ -93,6 +104,15 @@ const goPark = (value) => {
 
 .park-card-desc {
   color: #999;
-  margin: 0;
+  margin: 0 0 8px;
+}
+
+.park-card-link {
+  font-size: 13px;
+  color: #1677ff;
+}
+
+.park-card-link:hover {
+  text-decoration: underline;
 }
 </style>
