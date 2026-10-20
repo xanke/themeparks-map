@@ -89,7 +89,20 @@ const goHome = () => {
   router.push('/')
 }
 
-// 一键下载当前地图视图
+// 下载 JSON 文件
+const downloadJSON = (data, filename) => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
+// 一键下载当前地图视图（PNG + 地理围栏 JSON）
 const handleDownload = async () => {
   if (!mapRef.value || downloading.value) return
   downloading.value = true
@@ -98,9 +111,21 @@ const handleDownload = async () => {
     const zoom = map ? map.getZoom() : ''
     const versions = park.value?.versions || []
     const version = currentVersion.value ?? versions[versions.length - 1] ?? 'latest'
-    const filename = `${park.value.value}-v${version}-z${zoom}.png`
-    await mapRef.value.downloadMapAsImage(filename)
-    message.success('地图已开始下载')
+    const baseName = `${park.value.value}-v${version}-z${zoom}`
+
+    // 同时下载图片和地理围栏 JSON
+    await mapRef.value.downloadMapAsImage(`${baseName}.png`)
+
+    const geoFence = mapRef.value.getGeoFence()
+    downloadJSON({
+      park: park.value.value,
+      label: park.value.label,
+      version,
+      crs: park.value.crs || 'EPSG3857',
+      ...geoFence
+    }, `${baseName}-geofence.json`)
+
+    message.success('地图及地理围栏已开始下载')
   } catch (e) {
     message.error(e?.message || '地图导出失败')
   } finally {

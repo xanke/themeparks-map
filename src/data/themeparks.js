@@ -5,7 +5,7 @@ export const THEMEPARKS = [
     tags: ['disneypand'],
     crs: 'baidu',
     layerUrl: '/shdr/media/maps/prod/shdr-baidu/{version}/{z}/{x}/{y}.jpg',
-    versions: ['611231269', '740479929'],
+    versions: ['611231269', '740479929', '981376074'],
     center: [31.1492, 121.6667],
     officialUrl: 'https://www.shanghaidisneyresort.com/en/'
   },

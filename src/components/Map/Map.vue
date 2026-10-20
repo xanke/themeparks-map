@@ -222,6 +222,24 @@ const captureMapCanvas = async () => {
   return canvas
 }
 
+// 获取当前视图的地理围栏信息
+const getGeoFence = () => {
+  if (!mapInstance) throw new Error('地图尚未就绪')
+  const bounds = mapInstance.getBounds()
+  const zoom = mapInstance.getZoom()
+  const center = mapInstance.getCenter()
+  return {
+    zoom,
+    center: [center.lat, center.lng],
+    bounds: {
+      southWest: [bounds.getSouthWest().lat, bounds.getSouthWest().lng],
+      northEast: [bounds.getNorthEast().lat, bounds.getNorthEast().lng]
+    },
+    imageWidth: mapInstance.getSize().x,
+    imageHeight: mapInstance.getSize().y
+  }
+}
+
 // 一键下载当前地图视图为 PNG
 const downloadMapAsImage = async (filename = 'map.png') => {
   const canvas = await captureMapCanvas()
@@ -253,7 +271,8 @@ const downloadMapAsImage = async (filename = 'map.png') => {
 defineExpose({
   getMapInstance: () => mapInstance,
   getClusterGroup: () => clusterGroup,
-  downloadMapAsImage
+  downloadMapAsImage,
+  getGeoFence
 })
 </script>
 
